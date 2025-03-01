@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Capture/Upload</title>
+</head>
+<body>
+    <h1>Choose an Option:</h1>
+    <button id="captureButton">Start Camera</button>
+    <input type="file" id="fileInput" accept="image/*">
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    <video id="video" width="640" height="480" autoplay style="display:none;"></video>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const captureButton = document.getElementById('captureButton');
+            const fileInput = document.getElementById('fileInput');
+
+            // Start camera stream
+            captureButton.addEventListener('click', function() {
+                if (video.style.display === 'none') {
+                    video.style.display = 'block';
+                    fileInput.style.display = 'none';
+                    captureButton.textContent = 'Click here to take picture';
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(stream => {
+                            video.srcObject = stream;
+                        })
+                        .catch(error => {
+                            console.error('Error accessing the camera:', error);
+                        });
+                } else {
+                    // Capture image from video and convert to Blob
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob(function(blob) {
+                        const formData = new FormData();
+                        formData.append('image', blob, 'capture.jpg');
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/capture',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                console.log('Image captured and saved:', response);
+                                video.srcObject.getTracks().forEach(track => track.stop());
+                                video.style.display = 'none';
+                                captureButton.textContent = 'Start Camera';
+                                window.location.href = '/face_detection'; // Redirect to face detection page
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error capturing image:', error);
+                            }
+                        });
+                    }, 'image/jpeg', 0.8); // Adjust JPEG quality here (0.8 = 80%)
+                }
+            });
+
+            // Handle file upload
+            fileInput.addEventListener('change', function() {
+                video.style.display = 'none';
+                const file = fileInput.files[0];
+                
+                const maxSize = 16 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert("File is too large! Please select a file smaller than 16 MB.");
+                    fileInput.value = "";
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/upload',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('Image uploaded:', response);
+                        window.location.href = '/face_detection'; // Redirect to face detection page
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error uploading image:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

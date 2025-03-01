@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection</title>
+</head>
+<body>
+    <h1>Face Detection</h1>
+    <img src="/static/detected_faces.jpg" alt="Detected Faces" usemap="#facesMap">
+    <map name="facesMap">
+        {% for face in faces %}
+            <area shape="rect" coords="{{ face[0] }},{{ face[1] }},{{ face[0] + face[2] }},{{ face[1] + face[3] }}" 
+            href="#" onclick="document.getElementById('face_index').value = '{{ loop.index0 }}'; document.getElementById('form').submit();">
+        {% endfor %}
+    </map>
+    <form id="form" action="/select_face" method="post">
+        <input type="hidden" id="face_index" name="face_index">
+        {% for face in faces %}
+            <input type="hidden" name="faces" value="{{ face[0] }},{{ face[1] }},{{ face[2] }},{{ face[3] }}">
+        {% endfor %}
+    </form>
+</body>
+</html>
