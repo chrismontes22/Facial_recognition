@@ -1,0 +1,1 @@
+Images from the app are saved here. Recommended to make static folder before running Flask App.

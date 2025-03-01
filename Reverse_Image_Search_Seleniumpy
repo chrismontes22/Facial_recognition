@@ -28,10 +28,11 @@ try:
     file_input = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
     )
+    time.sleep(3)
     file_input.send_keys(os.path.join(os.getcwd(), "main_pic.jpg"))
 
     # Wait for the upload to complete
-    time.sleep(10)
+    time.sleep(5)
 
     # Locate the search bar using the provided XPath
     search_bar = WebDriverWait(driver, 10).until(

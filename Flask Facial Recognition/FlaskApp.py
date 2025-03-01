@@ -61,7 +61,7 @@ def capture_image():
         file = request.files['image']
         if file.filename == '':
             return 'No image selected', 400
-        file.save('main_pic.jpg')
+        file.save('static/main_pic.jpg')
         return redirect(url_for('face_detection'))
     except Exception as e:
         print(f"Error capturing image: {e}")
@@ -75,7 +75,7 @@ def upload_image():
         file = request.files['image']
         if file.filename == '':
             return 'No selected file', 400
-        file.save('main_pic.jpg')
+        file.save('static/main_pic.jpg')
         return redirect(url_for('face_detection'))
     except Exception as e:
         print(f"Error uploading image: {e}")
@@ -84,7 +84,7 @@ def upload_image():
 @app.route('/face_detection')
 def face_detection():
     # Path to the image
-    image_path = 'main_pic.jpg'
+    image_path = 'static/main_pic.jpg'
     
     # Detect and draw faces on the image
     img, faces = detect_and_draw_faces(image_path)
@@ -100,7 +100,7 @@ def select_face():
     
     # Get the selected face coordinates from the form
     face_index = int(request.form['face_index'])
-    image_path = 'main_pic.jpg'
+    image_path = 'static/main_pic.jpg'
     
     # Load the original image
     img_original = cv2.imread(image_path)
@@ -113,7 +113,7 @@ def select_face():
     cropped_face = img_original[y:y + height, x:x + width]
     
     # Save the cropped face image directly to the file path
-    cropped_face_path = 'Selected_Face.jpg'
+    cropped_face_path = 'static/cropped.jpg'
     cv2.imwrite(cropped_face_path, cropped_face)
     
     return jsonify({"message": "Face image saved successfully", "face_path": cropped_face_path})
