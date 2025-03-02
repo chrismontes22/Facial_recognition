@@ -123,12 +123,12 @@ def select_face():
     cropped_face = img_original[y:y + height, x:x + width]
     
     # Save the cropped face image directly to the file path
-    cropped_face_path = 'static/cropped.jpg'
+    cropped_face_path = 'static\cropped.jpg'
     cv2.imwrite(cropped_face_path, cropped_face)
 
     # Initialize Firefox WebDriver with headless mode
     options = Options()
-    options.add_argument("-headless") #Block this line to not show the Browser at work
+    #options.add_argument("-headless") #Remove first hashtag to hide browser movement
     service = Service('geckodriver.exe')
     driver = webdriver.Firefox(service=service, options=options)
 
@@ -146,7 +146,7 @@ def select_face():
         EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
     )
     time.sleep(3)
-    file_input.send_keys(os.path.join(os.getcwd(), "static/cropped.jpg"))
+    file_input.send_keys(os.path.join(os.getcwd(), "static\cropped.jpg"))
 
     # Wait for the upload to complete
     time.sleep(5)
@@ -166,7 +166,7 @@ def select_face():
 
     driver.quit()
     
-    return jsonify({"message": "Face image saved successfully", "face_path": cropped_face_path})
+    return jsonify({"message": "Face image saved successfully and searched on google!", "face_path": cropped_face_path})
 
 if __name__ == "__main__":
     app.run(debug=True)
