@@ -48,7 +48,21 @@ try:
     )
     
     print("Successfully opened LinkedIn profile:", driver.title)
-    time.sleep(560)
+    
+    # Extract information from the LinkedIn profile using provided XPath
+    profile_details = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "/html/body/main/section[1]/div/section/section[2]/div/div"))
+    ).text
+    
+    # Save the extracted information to a text file
+    with open("linkedin_profile.txt", "w") as file:
+        file.write(profile_details)
+    
+    print("Profile information saved to linkedin_profile.txt")
+    time.sleep(10)
+
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 finally:
     driver.quit()
